@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">OnDiet</string>
+    <string name="home">Home</string>
+    <string name="note_detail">Note Detail</string>
+    <string name="add_note">Add Note</string>
+    <string name="create_note">Create Note</string>
+    <string name="back">Back</string>
+</resources>
