@@ -1,5 +1,7 @@
 package com.example.ondiet.core.presentation.hub
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -14,6 +16,7 @@ import com.example.ondiet.core.presentation.component.navigation.NavHub
 import com.example.ondiet.core.presentation.component.topbar.TopBar
 import com.example.ondiet.core.presentation.hub.viewmodel.HubViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppHub(
@@ -35,7 +38,9 @@ fun AppHub(
         modifier = modifier,
         topBar = {
             TopBar(
-                title = viewModel.title.value
+                title = viewModel.title.value,
+                onNavigateUp = navController::navigateUp,
+                onSearch = navController::navigate
             )
         },
         bottomBar = {

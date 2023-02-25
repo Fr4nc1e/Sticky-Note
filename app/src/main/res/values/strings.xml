@@ -5,4 +5,9 @@
     <string name="add_note">Add Note</string>
     <string name="create_note">Create Note</string>
     <string name="back">Back</string>
+    <string name="search">Search</string>
+    <string name="delete">Delete</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="complete">Complete</string>
 </resources>

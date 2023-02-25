@@ -1,10 +1,10 @@
-package com.example.ondiet.presentation.notedetail
+package com.example.ondiet.presentation.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun NoteDetailScreen(
+fun SearchScreen(
     modifier: Modifier = Modifier
 ) {
 }
