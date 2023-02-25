@@ -13,7 +13,7 @@ import androidx.navigation.navArgument
 import com.example.ondiet.presentation.createnote.screen.CreateNoteScreen
 import com.example.ondiet.presentation.home.screen.HomeScreen
 import com.example.ondiet.presentation.notedetail.NoteDetailScreen
-import com.example.ondiet.presentation.search.SearchScreen
+import com.example.ondiet.presentation.search.screen.SearchScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -52,7 +52,10 @@ fun NavHub(
             )
         }
         composable(Screen.SearchScreen.route) {
-            SearchScreen(modifier = modifier)
+            SearchScreen(
+                modifier = modifier,
+                snackBarHostState = snackBarHostState
+            )
         }
     }
 }

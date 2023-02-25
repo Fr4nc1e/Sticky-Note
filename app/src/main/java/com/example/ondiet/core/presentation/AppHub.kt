@@ -1,4 +1,4 @@
-package com.example.ondiet.core.presentation.hub
+package com.example.ondiet.core.presentation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -21,7 +21,7 @@ import com.example.ondiet.core.presentation.component.bottombar.BottomBar
 import com.example.ondiet.core.presentation.component.navigation.NavHub
 import com.example.ondiet.core.presentation.component.navigation.bottomShowList
 import com.example.ondiet.core.presentation.component.topbar.TopBar
-import com.example.ondiet.core.presentation.hub.viewmodel.HubViewModel
+import com.example.ondiet.core.presentation.viewmodel.HubViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)

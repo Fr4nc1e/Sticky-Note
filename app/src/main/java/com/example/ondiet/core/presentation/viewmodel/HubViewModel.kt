@@ -1,4 +1,4 @@
-package com.example.ondiet.core.presentation.hub.viewmodel
+package com.example.ondiet.core.presentation.viewmodel
 
 import android.content.Context
 import androidx.compose.runtime.State

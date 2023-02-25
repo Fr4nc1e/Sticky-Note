@@ -48,8 +48,6 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
-            HomeEvent.SearchNote -> {
-            }
         }
     }
 

@@ -5,7 +5,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -40,8 +42,8 @@ import java.util.Locale
 fun NoteCard(
     modifier: Modifier = Modifier,
     note: Note,
-    onNoteCardClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onNoteCardClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}
 ) {
     var isExpanded by remember {
         mutableStateOf(false)
@@ -98,6 +100,7 @@ fun NoteCard(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 4
             )
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = SimpleDateFormat(
                     "hh:mm a",
