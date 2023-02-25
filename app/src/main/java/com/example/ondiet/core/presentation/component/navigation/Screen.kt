@@ -6,3 +6,5 @@ sealed class Screen(val route: String) {
     object CreateNoteScreen : Screen(route = "create_note_screen")
     object SearchScreen : Screen(route = "search_screen")
 }
+
+val bottomShowList = listOf("Home", "Search")

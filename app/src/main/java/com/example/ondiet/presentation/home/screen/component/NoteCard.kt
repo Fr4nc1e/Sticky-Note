@@ -88,13 +88,15 @@ fun NoteCard(
             Text(
                 text = note.title,
                 style = MaterialTheme.typography.titleLarge,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
             Divider(modifier = modifier.fillMaxWidth())
             Text(
                 text = note.description,
                 style = MaterialTheme.typography.bodyMedium,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 4
             )
             Text(
                 text = SimpleDateFormat(

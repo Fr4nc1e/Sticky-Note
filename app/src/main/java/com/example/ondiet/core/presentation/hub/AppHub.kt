@@ -14,13 +14,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.ondiet.R
 import com.example.ondiet.core.presentation.component.bottombar.BottomBar
 import com.example.ondiet.core.presentation.component.navigation.NavHub
+import com.example.ondiet.core.presentation.component.navigation.bottomShowList
 import com.example.ondiet.core.presentation.component.topbar.TopBar
 import com.example.ondiet.core.presentation.hub.viewmodel.HubViewModel
 
@@ -50,13 +49,12 @@ fun AppHub(
         topBar = {
             TopBar(
                 title = viewModel.title.value,
-                onNavigateUp = navController::navigateUp,
-                onSearch = navController::navigate
+                onNavigateUp = navController::navigateUp
             )
         },
         bottomBar = {
-            when (viewModel.title.value) {
-                stringResource(id = R.string.home) -> BottomBar(
+            if (viewModel.title.value in bottomShowList) {
+                BottomBar(
                     onNavigate = navController::navigate,
                     onPopBackStack = navController::popBackStack,
                     currentDestination = navController.currentDestination?.route

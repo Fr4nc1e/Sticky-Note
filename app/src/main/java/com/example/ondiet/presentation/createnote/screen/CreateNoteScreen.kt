@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.BottomEnd
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -67,11 +66,11 @@ fun CreateNoteScreen(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize().padding(8.dp)) {
-        if (viewModel.loadingState.value.isLoading) {
-            CircularProgressIndicator(modifier.align(Center))
-        }
-
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -86,7 +85,7 @@ fun CreateNoteScreen(
                             viewModel.onEvent(CreateNoteEvent.EnterTitle(it))
                         }
                     },
-                    modifier = Modifier.focusRequester(focusRequester),
+                    modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
                     placeholder = {
                         Text(text = stringResource(id = R.string.title))
                     },
@@ -110,6 +109,7 @@ fun CreateNoteScreen(
                     onValueChange = {
                         viewModel.onEvent(CreateNoteEvent.EnterDescription(it))
                     },
+                    modifier = Modifier.fillMaxSize(),
                     placeholder = {
                         Text(text = stringResource(id = R.string.description))
                     },
@@ -129,10 +129,17 @@ fun CreateNoteScreen(
         ExtendedFloatingActionButton(
             text = { Text(text = stringResource(R.string.complete)) },
             icon = {
-                Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = stringResource(id = R.string.complete)
-                )
+                when {
+                    viewModel.loadingState.value.isLoading -> {
+                        CircularProgressIndicator()
+                    }
+                    else -> {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = stringResource(id = R.string.complete)
+                        )
+                    }
+                }
             },
             onClick = { viewModel.onEvent(CreateNoteEvent.Complete) },
             modifier = Modifier

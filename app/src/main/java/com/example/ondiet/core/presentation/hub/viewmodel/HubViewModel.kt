@@ -22,6 +22,7 @@ class HubViewModel @Inject constructor() : ViewModel() {
             Screen.HomeScreen.route -> context.getString(R.string.home)
             Screen.NoteDetailScreen.route -> context.getString(R.string.note_detail)
             Screen.CreateNoteScreen.route -> context.getString(R.string.create_note)
+            Screen.SearchScreen.route -> context.getString(R.string.search)
             else -> ""
         }
     }

@@ -84,7 +84,7 @@ class CreateNoteViewModel @Inject constructor(
                     description = _descriptionState.value.text
                 }
             )
-            delay(500L)
+            delay(1000L)
             _loadingState.value = _loadingState.value.copy(
                 isLoading = false
             )
