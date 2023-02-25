@@ -13,7 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.ondiet.core.presentation.event.UiEvent
+import com.example.ondiet.core.presentation.event.CoreUiEvent
 import com.example.ondiet.presentation.home.event.HomeEvent
 import com.example.ondiet.presentation.home.screen.component.NoteCard
 import com.example.ondiet.presentation.home.viewmodel.HomeViewModel
@@ -29,17 +29,17 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UiEvent.Navigate -> {
+                is CoreUiEvent.Navigate -> {
                     onNavigate(event.route)
                 }
-                is UiEvent.SnackBarEvent -> {}
+                is CoreUiEvent.SnackBarEvent -> {}
                 else -> {}
             }
         }
     }
 
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(120.dp),
+        columns = GridCells.Adaptive(100.dp),
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -49,7 +49,7 @@ fun HomeScreen(
             NoteCard(
                 note = it,
                 onNoteCardClick = {
-                    viewModel.onEvent(HomeEvent.EnterDetailScreen(it._id))
+                    viewModel.onEvent(HomeEvent.EnterDetailScreen(noteId = it._id))
                 },
                 onDeleteClick = {
                     viewModel.onEvent(HomeEvent.DeleteNote(noteId = it._id))

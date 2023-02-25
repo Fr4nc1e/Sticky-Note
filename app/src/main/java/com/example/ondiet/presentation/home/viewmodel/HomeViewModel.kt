@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ondiet.core.presentation.component.navigation.Screen
-import com.example.ondiet.core.presentation.event.UiEvent
+import com.example.ondiet.core.presentation.event.CoreUiEvent
 import com.example.ondiet.domain.model.Note
 import com.example.ondiet.presentation.home.event.HomeEvent
 import com.example.ondiet.presentation.home.usecase.HomeUseCase
@@ -23,7 +23,7 @@ class HomeViewModel @Inject constructor(
     private val _notes = mutableStateOf(emptyList<Note>())
     val notes: State<List<Note>> = _notes
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    private val _eventFlow = MutableSharedFlow<CoreUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.EnterDetailScreen -> {
                 viewModelScope.launch {
                     _eventFlow.emit(
-                        UiEvent.Navigate(
+                        CoreUiEvent.Navigate(
                             Screen.NoteDetailScreen.route + "/${event.noteId.toHexString()}"
                         )
                     )

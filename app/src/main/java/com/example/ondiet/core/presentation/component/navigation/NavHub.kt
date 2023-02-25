@@ -2,6 +2,7 @@ package com.example.ondiet.core.presentation.component.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -18,7 +19,8 @@ import com.example.ondiet.presentation.search.SearchScreen
 @Composable
 fun NavHub(
     modifier: Modifier = Modifier,
-    navController: NavHostController
+    navController: NavHostController,
+    snackBarHostState: SnackbarHostState
 ) {
     NavHost(
         navController = navController,
@@ -45,6 +47,7 @@ fun NavHub(
         composable(Screen.CreateNoteScreen.route) {
             CreateNoteScreen(
                 modifier = modifier,
+                snackBarHostState = snackBarHostState,
                 onNavigateUp = navController::navigateUp
             )
         }

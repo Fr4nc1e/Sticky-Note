@@ -4,9 +4,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ondiet.core.presentation.event.UiEvent
+import com.example.ondiet.R
+import com.example.ondiet.core.presentation.event.CoreUiEvent
 import com.example.ondiet.core.presentation.state.LoadingState
 import com.example.ondiet.core.presentation.state.TextState
+import com.example.ondiet.core.presentation.util.UiText
 import com.example.ondiet.domain.model.Note
 import com.example.ondiet.presentation.createnote.event.CreateNoteEvent
 import com.example.ondiet.presentation.createnote.usecase.CreateNoteUseCase
@@ -31,13 +33,32 @@ class CreateNoteViewModel @Inject constructor(
     private val _loadingState = mutableStateOf(LoadingState())
     val loadingState: State<LoadingState> = _loadingState
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    private val _showKeyBoardState = MutableSharedFlow<Boolean>()
+    val showKeyBoardState = _showKeyBoardState.asSharedFlow()
+
+    private val _eventFlow = MutableSharedFlow<CoreUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            _showKeyBoardState.emit(true)
+        }
+    }
 
     fun onEvent(event: CreateNoteEvent) {
         when (event) {
             CreateNoteEvent.Complete -> {
-                complete()
+                if (_titleState.value.text.isNotBlank() &&
+                    _descriptionState.value.text.isNotBlank()
+                ) { complete() } else {
+                    viewModelScope.launch {
+                        _eventFlow.emit(
+                            CoreUiEvent.SnackBarEvent(
+                                uiText = UiText.StringResource(R.string.blank_tilte_or_description)
+                            )
+                        )
+                    }
+                }
             }
             is CreateNoteEvent.EnterDescription -> {
                 _descriptionState.value = _descriptionState.value.copy(
@@ -59,21 +80,15 @@ class CreateNoteViewModel @Inject constructor(
             )
             createNoteUseCase(
                 note = Note().apply {
-                    if (_titleState.value.text.isNotEmpty()) {
-                        title = _titleState.value.text
-                    }
-                    if (_descriptionState.value.text.isNotEmpty()) {
-                        description = _descriptionState.value.text
-                    }
+                    title = _titleState.value.text
+                    description = _descriptionState.value.text
                 }
             )
-            _titleState.value = TextState()
-            _descriptionState.value = TextState()
             delay(500L)
             _loadingState.value = _loadingState.value.copy(
                 isLoading = false
             )
-            _eventFlow.emit(UiEvent.NavigateUp)
+            _eventFlow.emit(CoreUiEvent.NavigateUp)
         }
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OnDiet</string>
+    <string name="app_name">Sticky Note</string>
     <string name="home">Home</string>
     <string name="note_detail">Note Detail</string>
     <string name="add_note">Add Note</string>
@@ -10,4 +10,5 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="complete">Complete</string>
+    <string name="blank_tilte_or_description">Blank tilte or description</string>
 </resources>

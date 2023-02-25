@@ -3,14 +3,22 @@ package com.example.ondiet.core.presentation.hub
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.ondiet.R
 import com.example.ondiet.core.presentation.component.bottombar.BottomBar
 import com.example.ondiet.core.presentation.component.navigation.NavHub
 import com.example.ondiet.core.presentation.component.topbar.TopBar
@@ -25,6 +33,9 @@ fun AppHub(
 ) {
     val context = LocalContext.current
     val navController = rememberNavController()
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
 
     LaunchedEffect(navController) {
         navController.currentBackStackEntryFlow.collect { backStackEntry ->
@@ -44,16 +55,27 @@ fun AppHub(
             )
         },
         bottomBar = {
-            BottomBar(
-                onNavigate = navController::navigate,
-                onPopBackStack = navController::popBackStack,
-                currentDestination = navController.currentDestination?.route
-            )
+            when (viewModel.title.value) {
+                stringResource(id = R.string.home) -> BottomBar(
+                    onNavigate = navController::navigate,
+                    onPopBackStack = navController::popBackStack,
+                    currentDestination = navController.currentDestination?.route
+                )
+            }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState) {
+                Snackbar(
+                    snackbarData = it,
+                    shape = RoundedCornerShape(16.dp)
+                )
+            }
         }
     ) {
         NavHub(
             modifier = Modifier.padding(it),
-            navController = navController
+            navController = navController,
+            snackBarHostState = snackBarHostState
         )
     }
 }
