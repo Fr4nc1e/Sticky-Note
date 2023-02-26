@@ -11,6 +11,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,9 +33,8 @@ fun AppHub(
 ) {
     val context = LocalContext.current
     val navController = rememberNavController()
-    val snackBarHostState = remember {
-        SnackbarHostState()
-    }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val title = viewModel.titleFlow.collectAsState().value
 
     LaunchedEffect(navController) {
         navController.currentBackStackEntryFlow.collect { backStackEntry ->
@@ -48,12 +48,12 @@ fun AppHub(
         modifier = modifier,
         topBar = {
             TopBar(
-                title = viewModel.title.value,
+                title = title,
                 onNavigateUp = navController::navigateUp
             )
         },
         bottomBar = {
-            if (viewModel.title.value in bottomShowList) {
+            if (title in bottomShowList) {
                 BottomBar(
                     onNavigate = navController::navigate,
                     onPopBackStack = navController::popBackStack,

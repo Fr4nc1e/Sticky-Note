@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.ondiet.domain.model.Note
 import com.example.ondiet.domain.repository.NoteRepository
 import io.realm.kotlin.Realm
+import io.realm.kotlin.ext.asFlow
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,11 +13,13 @@ import org.mongodb.kbson.ObjectId
 class NoteRepositoryImpl(
     private val realm: Realm
 ) : NoteRepository {
-    override suspend fun getNote(noteId: ObjectId): Note? {
+    override suspend fun getNote(noteId: ObjectId): Flow<Note?>? {
         return realm
             .query<Note>(query = "_id == $0", noteId)
             .first()
             .find()
+            ?.asFlow()
+            ?.map { it.obj }
     }
 
     override fun getAllNotes(): Flow<List<Note>> {

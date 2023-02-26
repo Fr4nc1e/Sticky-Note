@@ -1,7 +1,5 @@
 package com.example.ondiet.presentation.home.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ondiet.core.presentation.component.navigation.Screen
@@ -12,7 +10,9 @@ import com.example.ondiet.presentation.home.usecase.HomeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
@@ -20,8 +20,8 @@ import org.mongodb.kbson.ObjectId
 class HomeViewModel @Inject constructor(
     private val homeUseCase: HomeUseCase
 ) : ViewModel() {
-    private val _notes = mutableStateOf(emptyList<Note>())
-    val notes: State<List<Note>> = _notes
+    private val _notes = MutableStateFlow(emptyList<Note>())
+    val notes = _notes.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<CoreUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()

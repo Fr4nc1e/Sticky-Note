@@ -1,7 +1,5 @@
 package com.example.ondiet.presentation.createnote.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ondiet.R
@@ -17,21 +15,23 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CreateNoteViewModel @Inject constructor(
     private val createNoteUseCase: CreateNoteUseCase
 ) : ViewModel() {
-    private val _titleState = mutableStateOf(TextState())
-    val titleState: State<TextState> = _titleState
+    private val _titleState = MutableStateFlow(TextState())
+    val titleState = _titleState.asStateFlow()
 
-    private val _descriptionState = mutableStateOf(TextState())
-    val descriptionState: State<TextState> = _descriptionState
+    private val _descriptionState = MutableStateFlow(TextState())
+    val descriptionState = _descriptionState.asStateFlow()
 
-    private val _loadingState = mutableStateOf(LoadingState())
-    val loadingState: State<LoadingState> = _loadingState
+    private val _loadingState = MutableStateFlow(LoadingState())
+    val loadingState = _loadingState.asStateFlow()
 
     private val _showKeyBoardState = MutableSharedFlow<Boolean>()
     val showKeyBoardState = _showKeyBoardState.asSharedFlow()
@@ -61,23 +61,17 @@ class CreateNoteViewModel @Inject constructor(
                 }
             }
             is CreateNoteEvent.EnterDescription -> {
-                _descriptionState.value = _descriptionState.value.copy(
-                    text = event.text
-                )
+                _descriptionState.value = TextState(text = event.text)
             }
             is CreateNoteEvent.EnterTitle -> {
-                _titleState.value = _titleState.value.copy(
-                    text = event.text
-                )
+                _titleState.value = TextState(text = event.text)
             }
         }
     }
 
     private fun complete() {
         viewModelScope.launch(Dispatchers.IO) {
-            _loadingState.value = _loadingState.value.copy(
-                isLoading = true
-            )
+            _loadingState.value = LoadingState(isLoading = true)
             createNoteUseCase(
                 note = Note().apply {
                     title = _titleState.value.text
@@ -85,9 +79,7 @@ class CreateNoteViewModel @Inject constructor(
                 }
             )
             delay(1000L)
-            _loadingState.value = _loadingState.value.copy(
-                isLoading = false
-            )
+            _loadingState.value = LoadingState(isLoading = false)
             _eventFlow.emit(CoreUiEvent.NavigateUp)
         }
     }

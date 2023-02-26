@@ -22,6 +22,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Modifier
@@ -50,6 +51,7 @@ fun CreateNoteScreen(
 ) {
     val focusRequester = remember { FocusRequester() }
     val context = LocalContext.current
+    val isLoading = viewModel.loadingState.collectAsState().value.isLoading
 
     LaunchedEffect(viewModel.showKeyBoardState) {
         focusRequester.requestFocus()
@@ -79,7 +81,7 @@ fun CreateNoteScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TextField(
-                    value = viewModel.titleState.value.text,
+                    value = viewModel.titleState.collectAsState().value.text,
                     onValueChange = { viewModel.onEvent(CreateNoteEvent.EnterTitle(it)) },
                     modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
                     placeholder = {
@@ -101,7 +103,7 @@ fun CreateNoteScreen(
 
             Box(modifier = Modifier.fillMaxSize()) {
                 TextField(
-                    value = viewModel.descriptionState.value.text,
+                    value = viewModel.descriptionState.collectAsState().value.text,
                     onValueChange = {
                         viewModel.onEvent(CreateNoteEvent.EnterDescription(it))
                     },
@@ -126,7 +128,7 @@ fun CreateNoteScreen(
             text = { Text(text = stringResource(R.string.complete)) },
             icon = {
                 when {
-                    viewModel.loadingState.value.isLoading -> {
+                    isLoading -> {
                         CircularProgressIndicator()
                     }
                     else -> {
@@ -141,7 +143,7 @@ fun CreateNoteScreen(
             modifier = Modifier
                 .align(BottomEnd)
                 .padding(PaddingValues(end = 8.dp, bottom = 8.dp)),
-            expanded = !viewModel.loadingState.value.isLoading
+            expanded = !isLoading
         )
     }
 }

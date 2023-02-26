@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -41,6 +42,9 @@ fun NoteDetailScreen(
     modifier: Modifier = Modifier,
     viewModel: NoteDetailViewModel = hiltViewModel()
 ) {
+    val isLoading = viewModel.loadingState.collectAsState().value.isLoading
+    val readOnly = viewModel.onModify.collectAsState().value
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -54,10 +58,10 @@ fun NoteDetailScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TextField(
-                    value = viewModel.titleState.value.text,
+                    value = viewModel.titleState.collectAsState().value.text,
                     onValueChange = { viewModel.onEvent(NoteDetailEvent.EnterTitle(it)) },
                     modifier = Modifier.fillMaxWidth(),
-                    readOnly = viewModel.onModify.value,
+                    readOnly = readOnly,
                     placeholder = {
                         Text(text = stringResource(id = R.string.title))
                     },
@@ -79,12 +83,12 @@ fun NoteDetailScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 TextField(
-                    value = viewModel.descriptionState.value.text,
+                    value = viewModel.descriptionState.collectAsState().value.text,
                     onValueChange = {
                         viewModel.onEvent(NoteDetailEvent.EnterDescription(it))
                     },
                     modifier = Modifier.fillMaxSize(),
-                    readOnly = viewModel.onModify.value,
+                    readOnly = readOnly,
                     placeholder = {
                         Text(text = stringResource(id = R.string.description))
                     },
@@ -103,7 +107,7 @@ fun NoteDetailScreen(
 
         ExtendedFloatingActionButton(
             text = {
-                if (viewModel.onModify.value) {
+                if (readOnly) {
                     Text(text = stringResource(R.string.modify))
                 } else {
                     Text(text = stringResource(R.string.complete))
@@ -111,11 +115,11 @@ fun NoteDetailScreen(
             },
             icon = {
                 when {
-                    viewModel.loadingState.value.isLoading -> {
+                    isLoading -> {
                         CircularProgressIndicator()
                     }
                     else -> {
-                        if (viewModel.onModify.value) {
+                        if (readOnly) {
                             Icon(
                                 imageVector = Icons.Filled.Edit,
                                 contentDescription = stringResource(id = R.string.modify)
@@ -139,7 +143,7 @@ fun NoteDetailScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(PaddingValues(end = 8.dp, bottom = 8.dp)),
-            expanded = !viewModel.loadingState.value.isLoading
+            expanded = !isLoading
         )
     }
 }

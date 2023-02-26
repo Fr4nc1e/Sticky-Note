@@ -1,7 +1,5 @@
 package com.example.ondiet.presentation.search.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ondiet.R
@@ -19,7 +17,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
@@ -28,14 +28,14 @@ class SearchViewModel @Inject constructor(
     private val searchNoteUseCase: SearchNoteUseCase,
     private val homeUseCase: HomeUseCase
 ) : ViewModel() {
-    private val _inputState = mutableStateOf(TextState())
-    val inputState: State<TextState> = _inputState
+    private val _notes = MutableStateFlow(emptyList<Note>())
+    val notes = _notes.asStateFlow()
 
-    private val _notes = mutableStateOf(emptyList<Note>())
-    val notes: State<List<Note>> = _notes
+    private val _inputState = MutableStateFlow(TextState())
+    val inputState = _inputState.asStateFlow()
 
-    private val _loadingState = mutableStateOf(LoadingState())
-    val loadingState: State<LoadingState> = _loadingState
+    private val _loadingState = MutableStateFlow(LoadingState())
+    val loadingState = _loadingState.asStateFlow()
 
     private val _showKeyBoardState = MutableSharedFlow<Boolean>()
     val showKeyBoardState = _showKeyBoardState.asSharedFlow()
@@ -54,9 +54,7 @@ class SearchViewModel @Inject constructor(
     fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.Input -> {
-                _inputState.value = _inputState.value.copy(
-                    text = event.text
-                )
+                _inputState.value = TextState(text = event.text)
             }
             SearchEvent.OnSearch -> {
                 searchNote()
@@ -87,9 +85,9 @@ class SearchViewModel @Inject constructor(
                     )
                 )
             } else {
-                _loadingState.value = _loadingState.value.copy(isLoading = true)
+                _loadingState.value = LoadingState(true)
                 delay(1000L)
-                _loadingState.value = _loadingState.value.copy(isLoading = false)
+                _loadingState.value = LoadingState(false)
                 searchNoteUseCase(_inputState.value.text.trimIndent()).collect {
                     _notes.value = it
                 }

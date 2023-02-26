@@ -54,7 +54,8 @@ fun NavHub(
         composable(Screen.SearchScreen.route) {
             SearchScreen(
                 modifier = modifier,
-                snackBarHostState = snackBarHostState
+                snackBarHostState = snackBarHostState,
+                onNavigate = navController::navigate
             )
         }
     }

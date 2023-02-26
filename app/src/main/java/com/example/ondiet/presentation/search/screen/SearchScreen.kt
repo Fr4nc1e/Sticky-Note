@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,8 @@ fun SearchScreen(
 ) {
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
+    val notes = viewModel.notes.collectAsState().value
+    val isLoading = viewModel.loadingState.collectAsState().value.isLoading
 
     LaunchedEffect(viewModel.showKeyBoardState) {
         focusRequester.requestFocus()
@@ -75,7 +78,7 @@ fun SearchScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             OutlinedTextField(
-                value = viewModel.inputState.value.text,
+                value = viewModel.inputState.collectAsState().value.text,
                 onValueChange = {
                     viewModel.onEvent(SearchEvent.Input(it))
                 },
@@ -98,7 +101,7 @@ fun SearchScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(viewModel.notes.value) {
+                items(notes) {
                     NoteCard(
                         note = it,
                         onNoteCardClick = {
@@ -112,7 +115,7 @@ fun SearchScreen(
             }
         }
 
-        if (viewModel.loadingState.value.isLoading) {
+        if (isLoading) {
             CircularProgressIndicator(modifier.align(Alignment.Center))
         }
     }
