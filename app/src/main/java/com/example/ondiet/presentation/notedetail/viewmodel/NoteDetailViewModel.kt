@@ -9,6 +9,7 @@ import com.example.ondiet.domain.model.Note
 import com.example.ondiet.presentation.notedetail.event.NoteDetailEvent
 import com.example.ondiet.presentation.notedetail.usecase.NoteDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.realm.kotlin.types.RealmInstant
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -84,6 +85,7 @@ class NoteDetailViewModel @Inject constructor(
                 _id = _note.value._id
                 title = _titleState.value.text
                 description = _descriptionState.value.text
+                timestamp = RealmInstant.now()
             }
         )
         delay(1000L)

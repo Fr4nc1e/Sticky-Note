@@ -30,9 +30,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ondiet.R
 import com.example.ondiet.core.presentation.event.CoreUiEvent
@@ -84,6 +87,12 @@ fun CreateNoteScreen(
                     value = viewModel.titleState.collectAsState().value.text,
                     onValueChange = { viewModel.onEvent(CreateNoteEvent.EnterTitle(it)) },
                     modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
+                    textStyle = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        letterSpacing = 0.5.sp
+                    ),
                     placeholder = {
                         Text(text = stringResource(id = R.string.title))
                     },
