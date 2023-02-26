@@ -7,6 +7,9 @@ import com.example.ondiet.presentation.createnote.usecase.CreateNoteUseCase
 import com.example.ondiet.presentation.home.usecase.HomeUseCase
 import com.example.ondiet.presentation.home.usecase.component.DeleteNotesUseCase
 import com.example.ondiet.presentation.home.usecase.component.GetAllNotesUseCase
+import com.example.ondiet.presentation.notedetail.usecase.NoteDetailUseCase
+import com.example.ondiet.presentation.notedetail.usecase.component.GetNoteUseCase
+import com.example.ondiet.presentation.notedetail.usecase.component.ModifyNoteUseCase
 import com.example.ondiet.presentation.search.usecase.SearchNoteUseCase
 import dagger.Module
 import dagger.Provides
@@ -57,5 +60,14 @@ object AppModule {
     @Provides
     fun provideSearchNoteUseCase(repository: NoteRepository): SearchNoteUseCase {
         return SearchNoteUseCase(repository = repository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideNoteDetailUseCase(repository: NoteRepository): NoteDetailUseCase {
+        return NoteDetailUseCase(
+            getNote = GetNoteUseCase(repository = repository),
+            modifyNote = ModifyNoteUseCase(repository = repository)
+        )
     }
 }

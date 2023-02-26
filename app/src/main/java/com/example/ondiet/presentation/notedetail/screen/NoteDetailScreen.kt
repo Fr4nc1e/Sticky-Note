@@ -1,5 +1,7 @@
-package com.example.ondiet.presentation.createnote.screen
+package com.example.ondiet.presentation.notedetail.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,62 +12,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment.Companion.BottomEnd
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ondiet.R
-import com.example.ondiet.core.presentation.event.CoreUiEvent
-import com.example.ondiet.core.presentation.util.asString
-import com.example.ondiet.presentation.createnote.event.CreateNoteEvent
-import com.example.ondiet.presentation.createnote.viewmodel.CreateNoteViewModel
-import kotlinx.coroutines.flow.collectLatest
+import com.example.ondiet.presentation.notedetail.event.NoteDetailEvent
+import com.example.ondiet.presentation.notedetail.viewmodel.NoteDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CreateNoteScreen(
+fun NoteDetailScreen(
     modifier: Modifier = Modifier,
-    snackBarHostState: SnackbarHostState,
-    onNavigateUp: () -> Unit = {},
-    viewModel: CreateNoteViewModel = hiltViewModel()
+    viewModel: NoteDetailViewModel = hiltViewModel()
 ) {
-    val focusRequester = remember { FocusRequester() }
-    val context = LocalContext.current
-
-    LaunchedEffect(viewModel.showKeyBoardState) {
-        focusRequester.requestFocus()
-    }
-    LaunchedEffect(Unit) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                CoreUiEvent.NavigateUp -> { onNavigateUp() }
-                is CoreUiEvent.SnackBarEvent -> {
-                    snackBarHostState.showSnackbar(event.uiText.asString(context))
-                }
-                else -> {}
-            }
-        }
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -80,8 +55,9 @@ fun CreateNoteScreen(
             ) {
                 TextField(
                     value = viewModel.titleState.value.text,
-                    onValueChange = { viewModel.onEvent(CreateNoteEvent.EnterTitle(it)) },
-                    modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
+                    onValueChange = { viewModel.onEvent(NoteDetailEvent.EnterTitle(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = viewModel.onModify.value,
                     placeholder = {
                         Text(text = stringResource(id = R.string.title))
                     },
@@ -99,13 +75,16 @@ fun CreateNoteScreen(
 
             Divider(modifier = Modifier.fillMaxWidth())
 
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 TextField(
                     value = viewModel.descriptionState.value.text,
                     onValueChange = {
-                        viewModel.onEvent(CreateNoteEvent.EnterDescription(it))
+                        viewModel.onEvent(NoteDetailEvent.EnterDescription(it))
                     },
                     modifier = Modifier.fillMaxSize(),
+                    readOnly = viewModel.onModify.value,
                     placeholder = {
                         Text(text = stringResource(id = R.string.description))
                     },
@@ -123,23 +102,42 @@ fun CreateNoteScreen(
         }
 
         ExtendedFloatingActionButton(
-            text = { Text(text = stringResource(R.string.complete)) },
+            text = {
+                if (viewModel.onModify.value) {
+                    Text(text = stringResource(R.string.modify))
+                } else {
+                    Text(text = stringResource(R.string.complete))
+                }
+            },
             icon = {
                 when {
                     viewModel.loadingState.value.isLoading -> {
                         CircularProgressIndicator()
                     }
                     else -> {
-                        Icon(
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = stringResource(id = R.string.complete)
-                        )
+                        if (viewModel.onModify.value) {
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = stringResource(id = R.string.modify)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = stringResource(id = R.string.complete)
+                            )
+                        }
                     }
                 }
             },
-            onClick = { viewModel.onEvent(CreateNoteEvent.Complete) },
+            onClick = {
+                if (viewModel.onModify.value) {
+                    viewModel.onEvent(NoteDetailEvent.ModifyClicked)
+                } else {
+                    viewModel.onEvent(NoteDetailEvent.ModifyCompleted)
+                }
+            },
             modifier = Modifier
-                .align(BottomEnd)
+                .align(Alignment.BottomEnd)
                 .padding(PaddingValues(end = 8.dp, bottom = 8.dp)),
             expanded = !viewModel.loadingState.value.isLoading
         )

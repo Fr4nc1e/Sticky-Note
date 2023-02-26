@@ -12,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.ondiet.presentation.createnote.screen.CreateNoteScreen
 import com.example.ondiet.presentation.home.screen.HomeScreen
-import com.example.ondiet.presentation.notedetail.NoteDetailScreen
+import com.example.ondiet.presentation.notedetail.screen.NoteDetailScreen
 import com.example.ondiet.presentation.search.screen.SearchScreen
 
 @RequiresApi(Build.VERSION_CODES.O)

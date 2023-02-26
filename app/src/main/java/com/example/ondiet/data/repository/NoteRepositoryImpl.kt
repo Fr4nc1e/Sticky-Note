@@ -5,7 +5,6 @@ import com.example.ondiet.domain.model.Note
 import com.example.ondiet.domain.repository.NoteRepository
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
-import java.lang.Exception
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.mongodb.kbson.ObjectId
@@ -13,6 +12,13 @@ import org.mongodb.kbson.ObjectId
 class NoteRepositoryImpl(
     private val realm: Realm
 ) : NoteRepository {
+    override suspend fun getNote(noteId: ObjectId): Note? {
+        return realm
+            .query<Note>(query = "_id == $0", noteId)
+            .first()
+            .find()
+    }
+
     override fun getAllNotes(): Flow<List<Note>> {
         return realm
             .query<Note>()
@@ -45,9 +51,9 @@ class NoteRepositoryImpl(
         }
     }
 
-    override suspend fun deleteNote(id: ObjectId) {
+    override suspend fun deleteNote(noteId: ObjectId) {
         realm.write {
-            val queriedNote = query<Note>(query = "_id == $0", id)
+            val queriedNote = query<Note>(query = "_id == $0", noteId)
                 .first()
                 .find()
             try {

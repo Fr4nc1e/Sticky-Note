@@ -5,9 +5,10 @@ import kotlinx.coroutines.flow.Flow
 import org.mongodb.kbson.ObjectId
 
 interface NoteRepository {
+    suspend fun getNote(noteId: ObjectId): Note?
     fun getAllNotes(): Flow<List<Note>>
     fun filterNotes(title: String): Flow<List<Note>>
     suspend fun insertNote(note: Note)
     suspend fun updateNote(note: Note)
-    suspend fun deleteNote(id: ObjectId)
+    suspend fun deleteNote(noteId: ObjectId)
 }

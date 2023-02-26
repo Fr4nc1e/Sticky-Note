@@ -13,4 +13,5 @@
     <string name="blank_tilte_or_description">Blank tilte or description</string>
     <string name="no_note_exists_with_the_title">No note exists with the title.</string>
     <string name="empty_query">Empty input.</string>
+    <string name="modify">Modify</string>
 </resources>
