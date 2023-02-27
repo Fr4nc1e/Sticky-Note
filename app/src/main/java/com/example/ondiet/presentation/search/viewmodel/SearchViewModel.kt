@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
@@ -54,7 +55,7 @@ class SearchViewModel @Inject constructor(
     fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.Input -> {
-                _inputState.value = TextState(text = event.text)
+                _inputState.update { TextState(event.text) }
             }
             SearchEvent.OnSearch -> {
                 searchNote()
@@ -85,11 +86,15 @@ class SearchViewModel @Inject constructor(
                     )
                 )
             } else {
-                _loadingState.value = LoadingState(true)
+                _loadingState.update {
+                    LoadingState(true)
+                }
                 delay(1000L)
-                _loadingState.value = LoadingState(false)
-                searchNoteUseCase(_inputState.value.text.trimIndent()).collect {
-                    _notes.value = it
+                _loadingState.update {
+                    LoadingState(false)
+                }
+                searchNoteUseCase(_inputState.value.text.trimIndent()).collect { result ->
+                    _notes.update { result }
                 }
                 if (_notes.value.isEmpty()) {
                     _eventFlow.emit(

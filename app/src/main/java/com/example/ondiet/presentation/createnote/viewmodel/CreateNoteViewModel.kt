@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -61,17 +62,17 @@ class CreateNoteViewModel @Inject constructor(
                 }
             }
             is CreateNoteEvent.EnterDescription -> {
-                _descriptionState.value = TextState(text = event.text)
+                _descriptionState.update { TextState(event.text) }
             }
             is CreateNoteEvent.EnterTitle -> {
-                _titleState.value = TextState(text = event.text)
+                _titleState.update { TextState(event.text) }
             }
         }
     }
 
     private fun complete() {
         viewModelScope.launch(Dispatchers.IO) {
-            _loadingState.value = LoadingState(isLoading = true)
+            _loadingState.update { LoadingState(true) }
             createNoteUseCase(
                 note = Note().apply {
                     title = _titleState.value.text
@@ -79,7 +80,7 @@ class CreateNoteViewModel @Inject constructor(
                 }
             )
             delay(1000L)
-            _loadingState.value = LoadingState(isLoading = false)
+            _loadingState.update { LoadingState(true) }
             _eventFlow.emit(CoreUiEvent.NavigateUp)
         }
     }

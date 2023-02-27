@@ -9,10 +9,12 @@ import com.example.ondiet.presentation.home.event.HomeEvent
 import com.example.ondiet.presentation.home.usecase.HomeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
@@ -27,11 +29,7 @@ class HomeViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        viewModelScope.launch {
-            homeUseCase.getAllNotes().collect {
-                _notes.value = it
-            }
-        }
+        getAllNotes()
     }
 
     fun onEvent(event: HomeEvent) {
@@ -47,6 +45,14 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
+            }
+        }
+    }
+
+    private fun getAllNotes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            homeUseCase.getAllNotes().collectLatest {
+                _notes.value = it
             }
         }
     }

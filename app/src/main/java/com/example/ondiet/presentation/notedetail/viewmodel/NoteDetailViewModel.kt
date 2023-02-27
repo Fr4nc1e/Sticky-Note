@@ -16,6 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
@@ -49,37 +50,33 @@ class NoteDetailViewModel @Inject constructor(
     fun onEvent(event: NoteDetailEvent) {
         when (event) {
             is NoteDetailEvent.EnterDescription -> {
-                _descriptionState.value = TextState(text = event.text)
+                _descriptionState.update { TextState(event.text) }
             }
             is NoteDetailEvent.EnterTitle -> {
-                _titleState.value = TextState(text = event.text)
+                _titleState.update { TextState(event.text) }
             }
             NoteDetailEvent.ModifyCompleted -> {
-                _onModify.value = !_onModify.value
+                _onModify.update { !it }
                 modifyNote()
             }
             NoteDetailEvent.ModifyClicked -> {
-                _onModify.value = !_onModify.value
+                _onModify.update { !it }
             }
         }
     }
 
     private fun getNote(noteId: ObjectId) = viewModelScope.launch {
-        noteDetailUseCase.getNote(noteId)?.collectLatest {
-            it?.let {
-                _note.value = it
-                _titleState.value = _titleState.value.copy(
-                    text = it.title
-                )
-                _descriptionState.value = _descriptionState.value.copy(
-                    text = it.description
-                )
+        noteDetailUseCase.getNote(noteId)?.collectLatest { result ->
+            result?.let { note ->
+                _note.update { note }
+                _titleState.update { TextState(note.title) }
+                _descriptionState.update { TextState(note.description) }
             }
         }
     }
 
     private fun modifyNote() = viewModelScope.launch(Dispatchers.IO) {
-        _loadingState.value = LoadingState(isLoading = true)
+        _loadingState.update { LoadingState(true) }
         noteDetailUseCase.modifyNote(
             note = Note().apply {
                 _id = _note.value._id
@@ -89,6 +86,6 @@ class NoteDetailViewModel @Inject constructor(
             }
         )
         delay(1000L)
-        _loadingState.value = LoadingState(isLoading = false)
+        _loadingState.update { LoadingState(false) }
     }
 }
